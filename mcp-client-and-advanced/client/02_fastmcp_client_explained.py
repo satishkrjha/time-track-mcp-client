@@ -19,7 +19,7 @@ WHY DOES THE CODE LOOK LIKE "async with Client(...) as client:"?
 --------------------------------------------------------------------
 You could write this the "manual" way, spelling out every step:
 
-    client = Client("../main.py")
+    client = Client(PythonStdioTransport(SERVER_SCRIPT))
     await client.__aenter__()          # steps 1 + 2: start + handshake
     try:
         ... use the client here ...     # steps 3 + 4
@@ -33,7 +33,7 @@ running in the background forever, with nobody around to close it.
 Python's "async with" does exactly that manual version FOR you,
 automatically, and it GUARANTEES step 5 happens no matter what:
 
-    async with Client("../main.py") as client:
+    async with Client(PythonStdioTransport(SERVER_SCRIPT)) as client:
         ... use the client here ...
     # step 5 already happened here automatically, even if something above failed
 
@@ -43,13 +43,18 @@ do the identical five steps. Run this file and watch them do the same
 thing, two different ways.
 """
 import asyncio
+from pathlib import Path
+
 from fastmcp import Client
+from fastmcp.client.transports import PythonStdioTransport
+
+SERVER_SCRIPT = Path(__file__).resolve().parent.parent / "main.py"
 
 
 async def the_manual_way():
     """Not how you'll normally write this -- shown once, so 'async with' stops looking like magic."""
     print("--- THE MANUAL WAY (for understanding only) ---")
-    client = Client("../main.py")
+    client = Client(PythonStdioTransport(SERVER_SCRIPT))
 
     await client.__aenter__()  # steps 1 + 2: start the server, do the handshake
     try:
@@ -66,7 +71,7 @@ async def the_manual_way():
 async def the_real_way():
     """This is what you'll actually write, every time, from here on in this course."""
     print("\n--- THE REAL WAY (what every later file actually uses) ---")
-    async with Client("../main.py") as client:  # steps 1, 2, AND 5 (cleanup), handled for you
+    async with Client(PythonStdioTransport(SERVER_SCRIPT)) as client:  # steps 1, 2, AND 5 (cleanup), handled for you
         tools = await client.list_tools()  # step 3
         print("Tools:", [t.name for t in tools])
 

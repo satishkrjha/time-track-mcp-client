@@ -28,7 +28,7 @@ from fastmcp import Client
 #   list_projects()        -> ["Client Onboarding", "Internal Tools", "Website Redesign"]
 #   get_project_summary("Website Redesign")
 #                           -> total_hours: 19.0, Asha Patel: 13.5, Rahul Mehta: 5.5
-SERVER_URL = "https://time-track-mcp-server.vercel.app/mcp"
+SERVER_URL = "https://time-track-mcp-server-lovat.vercel.app/mcp/"
 
 
 async def main():
@@ -45,7 +45,9 @@ async def main():
         projects = await client.call_tool("list_projects", {})
         print("\nProjects, straight from the live deployment:", projects)
 
-        summary = await client.call_tool("get_project_summary", {"project": "Website Redesign"})
+        # summary = await client.call_tool("get_project_summary", {"project": "Website Redesign"})
+        summary = await client.call_tool("list_projects")
+              
         print("Live project summary:", summary)
 
 
